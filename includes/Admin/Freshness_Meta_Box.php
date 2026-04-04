@@ -34,7 +34,7 @@ class Freshness_Meta_Box extends Meta_Box {
 			$title,
 			$post_types,
 			'side',
-			'high'
+			'default'
 		);
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
@@ -93,6 +93,11 @@ class Freshness_Meta_Box extends Meta_Box {
 		$interval      = (int) get_post_meta( $post->ID, self::META_INTERVAL, true );
 		$last_reviewed = get_post_meta( $post->ID, self::META_LAST_REVIEWED, true );
 		$default       = (int) apply_filters( 'wpcity_cf_default_interval', 180 );
+
+		// Fallback: use post modified date if never explicitly reviewed.
+		if ( empty( $last_reviewed ) ) {
+			$last_reviewed = get_the_modified_date( 'Y-m-d H:i:s', $post );
+		}
 
 		$effective_interval = $interval > 0 ? $interval : ( -1 === $interval ? 0 : $default );
 		$status             = self::get_freshness_status( $post->ID );
@@ -211,9 +216,9 @@ class Freshness_Meta_Box extends Meta_Box {
 
 		$effective = $interval > 0 ? $interval : $default;
 
-		// Never reviewed.
+		// Never explicitly reviewed — use post's last modified date as baseline.
 		if ( empty( $last_reviewed ) ) {
-			return [ 'color' => 'red', 'label' => __( 'Never reviewed', 'wpcity-content-freshness' ), 'days' => 999 ];
+			$last_reviewed = get_the_modified_date( 'Y-m-d H:i:s', $post_id );
 		}
 
 		$reviewed_ts = strtotime( $last_reviewed );
