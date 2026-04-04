@@ -1,0 +1,180 @@
+/**
+ * WPCity Content Freshness Admin Styles
+ */
+
+/* ================================================
+   Post list column
+   ================================================ */
+
+.column-wpcity_cf {
+	width: 36px;
+	text-align: center;
+}
+
+.wpcity-cf-dot {
+	cursor: default;
+	font-size: 14px;
+}
+
+.wpcity-cf-dot-green { color: #00a32a; }
+.wpcity-cf-dot-orange { color: #dba617; }
+.wpcity-cf-dot-red { color: #d63638; }
+.wpcity-cf-dot-grey { color: #c3c4c7; }
+
+/* ================================================
+   Sidebar meta box
+   ================================================ */
+
+.wpcity-cf-container {
+	margin: -6px -12px -12px;
+	padding: 12px;
+}
+
+.wpcity-cf-field {
+	margin-bottom: 12px;
+}
+
+.wpcity-cf-field label {
+	display: block;
+	margin-bottom: 4px;
+}
+
+.wpcity-cf-field select {
+	width: 100%;
+}
+
+.wpcity-cf-status {
+	margin-bottom: 12px;
+}
+
+.wpcity-cf-status p {
+	margin: 4px 0;
+	font-size: 13px;
+}
+
+.wpcity-cf-last-reviewed {
+	color: #50575e;
+}
+
+.wpcity-cf-indicator {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.wpcity-cf-indicator .wpcity-cf-dot {
+	font-size: 10px;
+}
+
+.wpcity-cf-indicator-green { color: #00a32a; }
+.wpcity-cf-indicator-orange { color: #9a6700; }
+.wpcity-cf-indicator-red { color: #d63638; font-weight: 600; }
+
+.wpcity-cf-mark-reviewed {
+	width: 100%;
+	text-align: center;
+}
+
+.wpcity-cf-mark-reviewed.wpcity-cf-saved {
+	color: #00a32a;
+	border-color: #00a32a;
+}
+
+/* ================================================
+   Dashboard widget
+   ================================================ */
+
+.wpcity-cf-dashboard-ok {
+	color: #00a32a;
+	font-style: italic;
+}
+
+.wpcity-cf-dashboard-count {
+	font-size: 14px;
+	font-weight: 600;
+	color: #d63638;
+	margin-bottom: 8px;
+}
+
+.wpcity-cf-dashboard-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.wpcity-cf-dashboard-list li {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 0;
+	border-bottom: 1px solid #f0f0f1;
+	font-size: 13px;
+}
+
+.wpcity-cf-dashboard-list li:last-child {
+	border-bottom: none;
+}
+
+.wpcity-cf-dashboard-list a {
+	flex: 1;
+	text-decoration: none;
+}
+
+.wpcity-cf-dashboard-meta {
+	font-size: 11px;
+	color: #8c8f94;
+	white-space: nowrap;
+}
+
+.wpcity-cf-dashboard-more {
+	margin-top: 8px;
+	text-align: right;
+}
+
+/* ================================================
+   Settings page layout (same as Notes)
+   ================================================ */
+
+.wpcity-settings-header {
+	background: #1d2327;
+	margin-left: -20px;
+	padding: 12px 20px;
+	margin-bottom: 0;
+}
+
+.wpcity-settings-logo {
+	display: block;
+	height: 36px;
+	width: auto;
+}
+
+.wpcity-settings-wrap #poststuff {
+	padding-top: 12px;
+}
+
+.wpcity-settings-wrap .postbox h3 {
+	padding: 10px 14px;
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	border-bottom: 1px solid #c3c4c7;
+	cursor: default;
+}
+
+.wpcity-settings-wrap .postbox .inside {
+	padding: 12px 14px;
+	margin: 0;
+}
+
+.wpcity-settings-wrap #postbox-container-1 .inside a.button-primary {
+	margin-top: 4px;
+}
+
+.wpcity-settings-wrap #postbox-container-1 .inside ul {
+	margin: 8px 0 8px 16px;
+	list-style: disc;
+}
+
+.wpcity-settings-wrap #postbox-container-1 .inside ul li {
+	margin-bottom: 4px;
+}

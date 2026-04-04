@@ -1,0 +1,21 @@
+{
+    "name": "wpcity/content-freshness",
+    "description": "Track when your content was last reviewed and get notified when it needs updating",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "WPCity\\ContentFreshness\\": "includes/"
+        }
+    },
+    "require": {
+        "php": ">=8.1",
+        "wpcity/plugin-base": "@dev"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../../../plugin-base"
+        }
+    ]
+}

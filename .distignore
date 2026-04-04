@@ -1,0 +1,6 @@
+.distignore
+.gitattributes
+.gitignore
+docs/
+composer.json
+composer.lock
