@@ -1,1 +1,8 @@
 vendor/
+
+# Dropped in by the codus desktop app when a quadrant is linked. Not plugin
+# code, not written by anyone on this project, and never part of a release.
+AGENTS.md
+CLAUDE.md
+.claude/
+.codex/

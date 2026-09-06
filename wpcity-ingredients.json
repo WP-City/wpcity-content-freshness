@@ -1,0 +1,11 @@
+{
+    "plugin": "wpcity-content-freshness",
+    "base_version": "^1.0",
+    "ingredients": [
+        "Ingredient_Interface",
+        "Abstract_Plugin",
+        "Core/I18n",
+        "Core/Activator",
+        "Admin/Meta_Box"
+    ]
+}
