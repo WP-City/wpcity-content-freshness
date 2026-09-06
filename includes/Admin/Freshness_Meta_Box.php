@@ -100,7 +100,15 @@ class Freshness_Meta_Box extends Meta_Box {
 		 *
 		 * @param string $title The meta box title.
 		 */
-		$title = (string) apply_filters( 'wpcity_cf_metabox_label', __( 'Content Freshness', 'wpcity-content-freshness' ) );
+		$default_title = __( 'Content Freshness', 'wpcity-content-freshness' );
+
+		$title = apply_filters( 'wpcity_cf_metabox_label', $default_title );
+
+		// Casting would turn null into an empty heading and an array into the
+		// word "Array" plus a warning. Fall back to what went in instead.
+		if ( ! is_string( $title ) || '' === $title ) {
+			$title = $default_title;
+		}
 
 		add_meta_box(
 			self::BOX_ID,
@@ -255,9 +263,25 @@ class Freshness_Meta_Box extends Meta_Box {
 		 *
 		 * @param array<int, int> $allowed Allowed values. -1 disables tracking, 0 uses the site default.
 		 */
-		$allowed = apply_filters( 'wpcity_cf_allowed_intervals', [ -1, 0, 90, 180, 365 ] );
+		$default_allowed = [ -1, 0, 90, 180, 365 ];
 
-		if ( ! in_array( $interval, array_map( 'intval', (array) $allowed ), true ) ) {
+		$allowed = apply_filters( 'wpcity_cf_allowed_intervals', $default_allowed );
+
+		/*
+		 * This is a write path, and discarding a broken filter result here
+		 * discards the user's choice, not a third party's mistake. A callback
+		 * that returns null would leave (array) null === [], every value would
+		 * fail the check below, and the interval the user picked would be
+		 * dropped on every save with nothing to show for it. So fall back to
+		 * the list that went into the filter.
+		 */
+		$allowed = is_array( $allowed ) ? array_map( 'intval', $allowed ) : [];
+
+		if ( [] === $allowed ) {
+			$allowed = $default_allowed;
+		}
+
+		if ( ! in_array( $interval, $allowed, true ) ) {
 			return;
 		}
 
@@ -278,7 +302,15 @@ class Freshness_Meta_Box extends Meta_Box {
 			wp_send_json_error( __( 'Permission denied.', 'wpcity-content-freshness' ), 403 );
 		}
 
-		// Allow Pro to gate this via custom capability.
+		/*
+		 * Allow Pro to gate this via a custom capability.
+		 *
+		 * The one filter result this plugin does not restore to its input. A
+		 * permission answer is not the user's data, it is a decision, and a
+		 * callback that returns nothing must not be read as a yes. This fails
+		 * closed on purpose. The built-in edit_post check above already ran, so
+		 * this only ever narrows access, never widens it.
+		 */
 		if ( ! (bool) apply_filters( 'wpcity_cf_can_mark_reviewed', true, $post_id ) ) {
 			wp_send_json_error( __( 'You do not have permission to mark this as reviewed.', 'wpcity-content-freshness' ), 403 );
 		}
@@ -324,7 +356,14 @@ class Freshness_Meta_Box extends Meta_Box {
 		$now         = time();
 		$days_left   = (int) ceil( ( $deadline_ts - $now ) / DAY_IN_SECONDS );
 
-		$is_stale = (bool) apply_filters( 'wpcity_cf_is_stale', $days_left <= 0, $post_id, $effective, $last_reviewed );
+		$verdict  = $days_left <= 0;
+		$is_stale = apply_filters( 'wpcity_cf_is_stale', $verdict, $post_id, $effective, $last_reviewed );
+
+		// A callback that forgets to return yields null, and casting that to
+		// false would report an overdue post as fresh. Keep our own verdict.
+		if ( ! is_bool( $is_stale ) ) {
+			$is_stale = $verdict;
+		}
 
 		if ( $is_stale ) {
 			return [

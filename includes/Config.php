@@ -43,10 +43,16 @@ final class Config {
 	 * The post types this plugin tracks.
 	 *
 	 * A bare string is accepted as a single post type, matching how core treats
-	 * most post_type arguments. Anything else unusable yields an empty array,
-	 * which switches the plugin off rather than taking the site down.
+	 * most post_type arguments.
 	 *
-	 * @return array<int, string> Post type slugs, possibly empty.
+	 * A filter result that cannot be used falls back to the value that went
+	 * into the filter, never to nothing. By the time this runs the list may
+	 * already carry the user's own selection from the settings screen, and a
+	 * third party's broken callback must not be able to switch the plugin off
+	 * silently. An array that is deliberately empty is a different thing and is
+	 * honoured.
+	 *
+	 * @return array<int, string> Post type slugs, empty only when asked for.
 	 */
 	public static function tracked_post_types(): array {
 		/**
@@ -56,13 +62,19 @@ final class Config {
 		 *
 		 * @param array<int, string> $post_types Post type slugs. Default post and page.
 		 */
-		$post_types = apply_filters( 'wpcity_cf_post_types', self::DEFAULT_POST_TYPES );
+		$input      = self::DEFAULT_POST_TYPES;
+		$post_types = apply_filters( 'wpcity_cf_post_types', $input );
 
 		if ( is_string( $post_types ) ) {
 			$post_types = [ $post_types ];
 		}
 
 		if ( ! is_array( $post_types ) ) {
+			return $input;
+		}
+
+		// An empty array is a deliberate "track nothing" and is honoured.
+		if ( [] === $post_types ) {
 			return [];
 		}
 
@@ -72,6 +84,12 @@ final class Config {
 			if ( is_string( $post_type ) && '' !== $post_type ) {
 				$clean[] = $post_type;
 			}
+		}
+
+		// A non-empty list that contained nothing usable is a broken callback,
+		// not a choice, so fall back rather than switching the plugin off.
+		if ( [] === $clean ) {
+			return $input;
 		}
 
 		return array_values( array_unique( $clean ) );
@@ -94,10 +112,11 @@ final class Config {
 		 *
 		 * @param int $days Interval in days. Default 180.
 		 */
-		$days = apply_filters( 'wpcity_cf_default_interval', self::DEFAULT_INTERVAL );
+		$input = self::DEFAULT_INTERVAL;
+		$days  = apply_filters( 'wpcity_cf_default_interval', $input );
 
 		if ( ! is_numeric( $days ) || (int) $days < 1 ) {
-			return self::DEFAULT_INTERVAL;
+			return $input;
 		}
 
 		return (int) $days;
