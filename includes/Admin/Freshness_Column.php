@@ -20,6 +20,10 @@ use WPCity\PluginBase\Ingredient_Interface;
  */
 class Freshness_Column implements Ingredient_Interface {
 
+	private const COLUMN_ID = 'wpcity_cf';
+
+	private const META_LAST_REVIEWED = 'wpcity_cf_last_reviewed';
+
 	/**
 	 * Initialize the ingredient.
 	 *
@@ -111,7 +115,7 @@ class Freshness_Column implements Ingredient_Interface {
 	 * @return array<string, string>
 	 */
 	public function sortable_column( array $columns ): array {
-		$columns['wpcity_cf'] = 'wpcity_cf_last_reviewed';
+		$columns[ self::COLUMN_ID ] = self::META_LAST_REVIEWED;
 		return $columns;
 	}
 
@@ -126,12 +130,37 @@ class Freshness_Column implements Ingredient_Interface {
 			return;
 		}
 
-		if ( 'wpcity_cf_last_reviewed' !== $query->get( 'orderby' ) ) {
+		if ( self::META_LAST_REVIEWED !== $query->get( 'orderby' ) ) {
 			return;
 		}
 
-		$query->set( 'meta_key', 'wpcity_cf_last_reviewed' );
-		$query->set( 'orderby', 'meta_value' );
+		/*
+		 * A bare meta_key produces an INNER JOIN on postmeta, so every post
+		 * that was never explicitly reviewed disappears from the list as soon
+		 * as the user clicks the column header. Pairing EXISTS with NOT EXISTS
+		 * makes it a LEFT JOIN and keeps those posts in the result.
+		 */
+		$clauses = [
+			'relation' => 'OR',
+			'reviewed' => [
+				'key'     => self::META_LAST_REVIEWED,
+				'compare' => 'EXISTS',
+			],
+			'never_reviewed' => [
+				'key'     => self::META_LAST_REVIEWED,
+				'compare' => 'NOT EXISTS',
+			],
+		];
+
+		// Merge rather than overwrite; another plugin may already have set one.
+		$existing = $query->get( 'meta_query' );
+
+		$query->set(
+			'meta_query',
+			empty( $existing ) ? $clauses : [ 'relation' => 'AND', $existing, $clauses ]
+		);
+
+		$query->set( 'orderby', [ 'reviewed' => 'ASC' === strtoupper( (string) $query->get( 'order' ) ) ? 'ASC' : 'DESC' ] );
 	}
 
 	/**
