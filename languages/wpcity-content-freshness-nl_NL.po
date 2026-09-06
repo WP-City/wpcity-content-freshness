@@ -1,0 +1,236 @@
+# Translation of WPCity Content Freshness in Dutch.
+# This file is distributed under the same license as the WPCity Content Freshness plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: WPCity Content Freshness 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wpcity.dev\n"
+"POT-Creation-Date: 2026-09-06T00:00:00+00:00\n"
+"PO-Revision-Date: 2026-09-06 11:37\n"
+"Last-Translator: WPCity <hello@wpcity.dev>\n"
+"Language-Team: Dutch\n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: wpcity-content-freshness\n"
+
+#. Plugin Name of the plugin
+#: wpcity-content-freshness.php
+msgid "WPCity Content Freshness"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: wpcity-content-freshness.php
+msgid "https://wpcity.dev/plugins/content-freshness"
+msgstr ""
+
+#. Description of the plugin
+#: wpcity-content-freshness.php
+msgid "Track when your content was last reviewed and get notified when it needs updating."
+msgstr "Houd bij wanneer je content voor het laatst is beoordeeld en krijg een melding wanneer het tijd is voor een update."
+
+#. Author of the plugin
+#: wpcity-content-freshness.php
+msgid "WPCity"
+msgstr ""
+
+#. Author URI of the plugin
+#: wpcity-content-freshness.php
+msgid "https://wpcity.dev"
+msgstr ""
+
+#: includes/Admin/Dashboard_Widget.php:40
+#: includes/Admin/Freshness_Column.php:78
+#: includes/Admin/Freshness_Meta_Box.php:105
+#: includes/Admin/Settings_Page.php:45
+#: includes/Admin/Settings_Page.php:46
+msgid "Content Freshness"
+msgstr "Actualiteit content"
+
+#: includes/Admin/Dashboard_Widget.php:134
+msgid "All content is up to date."
+msgstr "Alle content is up-to-date."
+
+#. translators: %d: number of posts that need review.
+#: includes/Admin/Dashboard_Widget.php:141
+#, php-format
+msgid "%d post needs review"
+msgid_plural "%d posts need review"
+msgstr[0] "%d bericht heeft een beoordeling nodig"
+msgstr[1] "%d berichten hebben een beoordeling nodig"
+
+#. translators: %d: number of posts that need review.
+#: includes/Admin/Dashboard_Widget.php:161
+#, php-format
+msgid "View all %d posts"
+msgstr "Bekijk alle %d berichten"
+
+#: includes/Admin/Freshness_Meta_Box.php:151
+msgid "Saving..."
+msgstr "Bezig met opslaan..."
+
+#: includes/Admin/Freshness_Meta_Box.php:152
+msgid "Reviewed just now"
+msgstr "Zojuist beoordeeld"
+
+#: includes/Admin/Freshness_Meta_Box.php:153
+#: includes/Admin/Freshness_Meta_Box.php:221
+msgid "Mark as Reviewed"
+msgstr "Markeer als beoordeeld"
+
+#: includes/Admin/Freshness_Meta_Box.php:181
+msgid "Review Interval"
+msgstr "Beoordelingsinterval"
+
+#. translators: %d: default review interval in days.
+#: includes/Admin/Freshness_Meta_Box.php:187
+#, php-format
+msgid "Use default (%d days)"
+msgstr "Standaard gebruiken (%d dagen)"
+
+#: includes/Admin/Freshness_Meta_Box.php:192
+msgid "3 months"
+msgstr "3 maanden"
+
+#: includes/Admin/Freshness_Meta_Box.php:193
+msgid "6 months"
+msgstr "6 maanden"
+
+#: includes/Admin/Freshness_Meta_Box.php:194
+msgid "12 months"
+msgstr "12 maanden"
+
+#: includes/Admin/Freshness_Meta_Box.php:195
+msgid "Don't track"
+msgstr "Niet bijhouden"
+
+#: includes/Admin/Freshness_Meta_Box.php:202
+msgid "Last Reviewed:"
+msgstr "Laatst beoordeeld:"
+
+#: includes/Admin/Freshness_Meta_Box.php:281
+msgid "Permission denied."
+msgstr "Geen toestemming."
+
+#: includes/Admin/Freshness_Meta_Box.php:286
+msgid "You do not have permission to mark this as reviewed."
+msgstr "Je hebt geen toestemming om dit als beoordeeld te markeren."
+
+#: includes/Admin/Freshness_Meta_Box.php:315
+msgid "Not tracked"
+msgstr "Niet bijgehouden"
+
+#. translators: %d: number of days the review is overdue.
+#: includes/Admin/Freshness_Meta_Box.php:336
+#, php-format
+msgid "Overdue by %d days"
+msgstr "%d dagen over tijd"
+
+#. translators: %d: number of days until the review is due.
+#: includes/Admin/Freshness_Meta_Box.php:345
+#, php-format
+msgid "Due in %d days"
+msgstr "Over %d dagen aan de beurt"
+
+#. translators: %s: formatted date of the last review.
+#: includes/Admin/Freshness_Meta_Box.php:353
+#, php-format
+msgid "Reviewed %s"
+msgstr "Beoordeeld op %s"
+
+#. translators: 1: plugin name, 2: five star rating link.
+#: includes/Admin/Settings_Page.php:82
+#, php-format
+msgid "If you like %1$s, please leave us a %2$s rating. Thank you!"
+msgstr "Als je %1$s waardeert, laat ons dan een %2$s beoordeling achter. Bedankt!"
+
+#: includes/Admin/Settings_Page.php:124
+msgid "Settings"
+msgstr "Instellingen"
+
+#: includes/Admin/Settings_Page.php:129
+msgid "Post Types"
+msgstr "Berichttypes"
+
+#: includes/Admin/Settings_Page.php:132
+msgid "Select which post types to track for content freshness."
+msgstr "Selecteer welke berichttypes je wilt bijhouden op actualiteit."
+
+#: includes/Admin/Settings_Page.php:136
+msgid "Default Review Interval"
+msgstr "Standaard beoordelingsinterval"
+
+#: includes/Admin/Settings_Page.php:139
+msgid "Default interval for reviewing content. Can be overridden per post."
+msgstr "Standaardinterval voor het beoordelen van content. Per bericht aan te passen."
+
+#: includes/Admin/Settings_Page.php:157
+msgid "Rate & Review"
+msgstr "Waarderen & beoordelen"
+
+#. translators: %s: five star rating link.
+#: includes/Admin/Settings_Page.php:159
+#, php-format
+msgid "Enjoy Content Freshness? Please consider leaving a %s rating. Thank you!"
+msgstr "Bevalt Actualiteit content? Overweeg dan een %s beoordeling achter te laten. Bedankt!"
+
+#. translators: %s: five star rating link.
+#: includes/Admin/Settings_Page.php:160
+msgid "Leave a Review"
+msgstr "Schrijf een beoordeling"
+
+#: includes/Admin/Settings_Page.php:164
+msgid "Need Help?"
+msgstr "Hulp nodig?"
+
+#: includes/Admin/Settings_Page.php:166
+msgid "Having issues or need support? We are happy to help!"
+msgstr "Loop je ergens tegenaan of heb je ondersteuning nodig? We helpen je graag!"
+
+#: includes/Admin/Settings_Page.php:167
+msgid "Get Support"
+msgstr "Ondersteuning krijgen"
+
+#: includes/Admin/Settings_Page.php:171
+msgid "About Content Freshness"
+msgstr "Over Actualiteit content"
+
+#: includes/Admin/Settings_Page.php:173
+msgid "Keep your content up to date by tracking when each page was last reviewed."
+msgstr "Houd je content actueel door bij te houden wanneer elke pagina voor het laatst is beoordeeld."
+
+#: includes/Admin/Settings_Page.php:175
+msgid "Review interval per post or page"
+msgstr "Beoordelingsinterval per bericht of pagina"
+
+#: includes/Admin/Settings_Page.php:176
+msgid "Color-coded freshness indicator in post list"
+msgstr "Kleurindicator voor actualiteit in de berichtenlijst"
+
+#: includes/Admin/Settings_Page.php:177
+msgid "Dashboard widget with stale content"
+msgstr "Dashboardwidget met verouderde content"
+
+#: includes/Admin/Settings_Page.php:178
+msgid "Mark as reviewed with one click"
+msgstr "Met één klik als beoordeeld markeren"
+
+#. translators: %s: plugin version number.
+#: includes/Admin/Settings_Page.php:180
+#, php-format
+msgid "Version %s"
+msgstr "Versie %s"
+
+#: includes/Admin/Settings_Page.php:218
+msgid "3 months (90 days)"
+msgstr "3 maanden (90 dagen)"
+
+#: includes/Admin/Settings_Page.php:219
+msgid "6 months (180 days)"
+msgstr "6 maanden (180 dagen)"
+
+#: includes/Admin/Settings_Page.php:220
+msgid "12 months (365 days)"
+
+msgstr "12 maanden (365 dagen)"

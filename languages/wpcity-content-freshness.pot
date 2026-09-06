@@ -1,0 +1,234 @@
+# Copyright (C) 2026 WPCity
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: WPCity Content Freshness 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpcity-content-freshness\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-09-06T09:35:42+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: wpcity-content-freshness\n"
+
+#. Plugin Name of the plugin
+#: wpcity-content-freshness.php
+msgid "WPCity Content Freshness"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: wpcity-content-freshness.php
+msgid "https://wpcity.dev/plugins/content-freshness"
+msgstr ""
+
+#. Description of the plugin
+#: wpcity-content-freshness.php
+msgid "Track when your content was last reviewed and get notified when it needs updating."
+msgstr ""
+
+#. Author of the plugin
+#: wpcity-content-freshness.php
+msgid "WPCity"
+msgstr ""
+
+#. Author URI of the plugin
+#: wpcity-content-freshness.php
+msgid "https://wpcity.dev"
+msgstr ""
+
+#: includes/Admin/Dashboard_Widget.php:40
+#: includes/Admin/Freshness_Column.php:78
+#: includes/Admin/Freshness_Meta_Box.php:105
+#: includes/Admin/Settings_Page.php:45
+#: includes/Admin/Settings_Page.php:46
+msgid "Content Freshness"
+msgstr ""
+
+#: includes/Admin/Dashboard_Widget.php:134
+msgid "All content is up to date."
+msgstr ""
+
+#. translators: %d: number of posts that need review.
+#: includes/Admin/Dashboard_Widget.php:141
+#, php-format
+msgid "%d post needs review"
+msgid_plural "%d posts need review"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of posts that need review.
+#: includes/Admin/Dashboard_Widget.php:161
+#, php-format
+msgid "View all %d posts"
+msgstr ""
+
+#: includes/Admin/Freshness_Meta_Box.php:151
+msgid "Saving..."
+msgstr ""
+
+#: includes/Admin/Freshness_Meta_Box.php:152
+msgid "Reviewed just now"
+msgstr ""
+
+#: includes/Admin/Freshness_Meta_Box.php:153
+#: includes/Admin/Freshness_Meta_Box.php:221
+msgid "Mark as Reviewed"
+msgstr ""
+
+#: includes/Admin/Freshness_Meta_Box.php:181
+msgid "Review Interval"
+msgstr ""
+
+#. translators: %d: default review interval in days.
+#: includes/Admin/Freshness_Meta_Box.php:187
+#, php-format
+msgid "Use default (%d days)"
+msgstr ""
+
+#: includes/Admin/Freshness_Meta_Box.php:192
+msgid "3 months"
+msgstr ""
+
+#: includes/Admin/Freshness_Meta_Box.php:193
+msgid "6 months"
+msgstr ""
+
+#: includes/Admin/Freshness_Meta_Box.php:194
+msgid "12 months"
+msgstr ""
+
+#: includes/Admin/Freshness_Meta_Box.php:195
+msgid "Don't track"
+msgstr ""
+
+#: includes/Admin/Freshness_Meta_Box.php:202
+msgid "Last Reviewed:"
+msgstr ""
+
+#: includes/Admin/Freshness_Meta_Box.php:281
+msgid "Permission denied."
+msgstr ""
+
+#: includes/Admin/Freshness_Meta_Box.php:286
+msgid "You do not have permission to mark this as reviewed."
+msgstr ""
+
+#: includes/Admin/Freshness_Meta_Box.php:315
+msgid "Not tracked"
+msgstr ""
+
+#. translators: %d: number of days the review is overdue.
+#: includes/Admin/Freshness_Meta_Box.php:336
+#, php-format
+msgid "Overdue by %d days"
+msgstr ""
+
+#. translators: %d: number of days until the review is due.
+#: includes/Admin/Freshness_Meta_Box.php:345
+#, php-format
+msgid "Due in %d days"
+msgstr ""
+
+#. translators: %s: formatted date of the last review.
+#: includes/Admin/Freshness_Meta_Box.php:353
+#, php-format
+msgid "Reviewed %s"
+msgstr ""
+
+#. translators: 1: plugin name, 2: five star rating link.
+#: includes/Admin/Settings_Page.php:82
+#, php-format
+msgid "If you like %1$s, please leave us a %2$s rating. Thank you!"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:124
+msgid "Settings"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:129
+msgid "Post Types"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:132
+msgid "Select which post types to track for content freshness."
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:136
+msgid "Default Review Interval"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:139
+msgid "Default interval for reviewing content. Can be overridden per post."
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:157
+msgid "Rate & Review"
+msgstr ""
+
+#. translators: %s: five star rating link.
+#: includes/Admin/Settings_Page.php:159
+#, php-format
+msgid "Enjoy Content Freshness? Please consider leaving a %s rating. Thank you!"
+msgstr ""
+
+#. translators: %s: five star rating link.
+#: includes/Admin/Settings_Page.php:160
+msgid "Leave a Review"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:164
+msgid "Need Help?"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:166
+msgid "Having issues or need support? We are happy to help!"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:167
+msgid "Get Support"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:171
+msgid "About Content Freshness"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:173
+msgid "Keep your content up to date by tracking when each page was last reviewed."
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:175
+msgid "Review interval per post or page"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:176
+msgid "Color-coded freshness indicator in post list"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:177
+msgid "Dashboard widget with stale content"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:178
+msgid "Mark as reviewed with one click"
+msgstr ""
+
+#. translators: %s: plugin version number.
+#: includes/Admin/Settings_Page.php:180
+#, php-format
+msgid "Version %s"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:218
+msgid "3 months (90 days)"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:219
+msgid "6 months (180 days)"
+msgstr ""
+
+#: includes/Admin/Settings_Page.php:220
+msgid "12 months (365 days)"
+msgstr ""
