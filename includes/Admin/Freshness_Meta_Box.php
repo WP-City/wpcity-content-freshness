@@ -172,8 +172,7 @@ class Freshness_Meta_Box extends Meta_Box {
 			$last_reviewed = get_the_modified_date( 'Y-m-d H:i:s', $post );
 		}
 
-		$effective_interval = $interval > 0 ? $interval : ( -1 === $interval ? 0 : $default );
-		$status             = self::get_freshness_status( $post->ID );
+		$status = self::get_freshness_status( $post->ID );
 
 		?>
 		<div class="wpcity-cf-container">
@@ -182,7 +181,13 @@ class Freshness_Meta_Box extends Meta_Box {
 				<label for="wpcity-cf-interval"><strong><?php esc_html_e( 'Review Interval', 'wpcity-content-freshness' ); ?></strong></label>
 				<select name="wpcity_cf_review_interval" id="wpcity-cf-interval">
 					<option value="0" <?php selected( $interval, 0 ); ?>>
-						<?php printf( esc_html__( 'Use default (%d days)', 'wpcity-content-freshness' ), $default ); ?>
+						<?php
+						printf(
+							/* translators: %d: default review interval in days. */
+							esc_html__( 'Use default (%d days)', 'wpcity-content-freshness' ),
+							$default
+						);
+						?>
 					</option>
 					<option value="90" <?php selected( $interval, 90 ); ?>><?php esc_html_e( '3 months', 'wpcity-content-freshness' ); ?></option>
 					<option value="180" <?php selected( $interval, 180 ); ?>><?php esc_html_e( '6 months', 'wpcity-content-freshness' ); ?></option>
@@ -233,10 +238,33 @@ class Freshness_Meta_Box extends Meta_Box {
 			return;
 		}
 
-		if ( isset( $_POST['wpcity_cf_review_interval'] ) ) {
-			$interval = (int) $_POST['wpcity_cf_review_interval'];
-			update_post_meta( $post_id, self::META_INTERVAL, $interval );
+		if ( ! isset( $_POST['wpcity_cf_review_interval'] ) ) {
+			return;
 		}
+
+		$interval = (int) $_POST['wpcity_cf_review_interval'];
+
+		/*
+		 * -1 means "do not track" and 0 means "use the site default"; anything
+		 * else is a length in days. The value goes straight into date
+		 * arithmetic, so reject what the dropdown cannot produce instead of
+		 * storing it.
+		 */
+
+		/**
+		 * Filters the review intervals a post may be set to, in days.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array<int, int> $allowed Allowed values. -1 disables tracking, 0 uses the site default.
+		 */
+		$allowed = apply_filters( 'wpcity_cf_allowed_intervals', [ -1, 0, 90, 180, 365 ] );
+
+		if ( ! in_array( $interval, array_map( 'intval', (array) $allowed ), true ) ) {
+			return;
+		}
+
+		update_post_meta( $post_id, self::META_INTERVAL, $interval );
 	}
 
 	/**
@@ -250,12 +278,12 @@ class Freshness_Meta_Box extends Meta_Box {
 		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
 		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
-			wp_send_json_error( 'Permission denied.', 403 );
+			wp_send_json_error( __( 'Permission denied.', 'wpcity-content-freshness' ), 403 );
 		}
 
 		// Allow Pro to gate this via custom capability.
 		if ( ! apply_filters( 'wpcity_cf_can_mark_reviewed', true, $post_id ) ) {
-			wp_send_json_error( 'You do not have permission to mark this as reviewed.', 403 );
+			wp_send_json_error( __( 'You do not have permission to mark this as reviewed.', 'wpcity-content-freshness' ), 403 );
 		}
 
 		$now = current_time( 'mysql' );
@@ -304,6 +332,7 @@ class Freshness_Meta_Box extends Meta_Box {
 		if ( $is_stale ) {
 			return [
 				'color' => 'red',
+				/* translators: %d: number of days the review is overdue. */
 				'label' => sprintf( __( 'Overdue by %d days', 'wpcity-content-freshness' ), abs( $days_left ) ),
 				'days'  => $days_left,
 			];
@@ -312,6 +341,7 @@ class Freshness_Meta_Box extends Meta_Box {
 		if ( $days_left <= 30 ) {
 			return [
 				'color' => 'orange',
+				/* translators: %d: number of days until the review is due. */
 				'label' => sprintf( __( 'Due in %d days', 'wpcity-content-freshness' ), $days_left ),
 				'days'  => $days_left,
 			];
@@ -319,6 +349,7 @@ class Freshness_Meta_Box extends Meta_Box {
 
 		return [
 			'color' => 'green',
+			/* translators: %s: formatted date of the last review. */
 			'label' => sprintf( __( 'Reviewed %s', 'wpcity-content-freshness' ), wp_date( get_option( 'date_format' ), $reviewed_ts ) ),
 			'days'  => $days_left,
 		];
