@@ -37,4 +37,4 @@ La liste déroulante **Intervalle de relecture** accepte :
 | `wpcity_cf_review_interval` | Post meta | Intervalle propre au contenu, en jours |
 | `wpcity_cf_last_reviewed` | Post meta | Date MySQL de la dernière relecture |
 
-La suppression de l'extension retire les quatre, ainsi que toute autre clé de l'espace de noms `wpcity_cf_`.
+La suppression de l'extension retire les quatre, et rien d'autre. L'extension Pro écrit ses propres réglages sous `wpcity_cf_pro_`, qui s'imbrique dans ce préfixe mais appartient à Pro ; ils partent quand vous supprimez Pro.

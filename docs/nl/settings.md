@@ -37,4 +37,4 @@ De dropdown **Beoordelingsinterval** in de zijbalk accepteert:
 | `wpcity_cf_review_interval` | Post meta | Interval per bericht in dagen |
 | `wpcity_cf_last_reviewed` | Post meta | MySQL-datetime van de laatste beoordeling |
 
-Bij het verwijderen van de plugin gaan alle vier weg, samen met elke andere sleutel in de `wpcity_cf_`-namespace.
+Bij het verwijderen van de plugin gaan alle vier weg, en verder niets. De Pro-uitbreiding schrijft zijn eigen instellingen onder `wpcity_cf_pro_`, wat binnen deze prefix valt maar van Pro is; die verdwijnen als je Pro verwijdert.

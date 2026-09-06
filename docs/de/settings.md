@@ -37,4 +37,4 @@ Das Auswahlfeld **Prüfintervall** in der Seitenleiste akzeptiert:
 | `wpcity_cf_review_interval` | Post Meta | Intervall des einzelnen Beitrags in Tagen |
 | `wpcity_cf_last_reviewed` | Post Meta | MySQL-Datetime der letzten Prüfung |
 
-Beim Löschen des Plugins verschwinden alle vier, zusammen mit jedem weiteren Schlüssel im Namensraum `wpcity_cf_`.
+Beim Löschen des Plugins verschwinden alle vier, und sonst nichts. Die Pro-Erweiterung schreibt ihre eigenen Einstellungen unter `wpcity_cf_pro_`, das in diesem Präfix steckt, aber Pro gehört; sie verschwinden, wenn du Pro löschst.

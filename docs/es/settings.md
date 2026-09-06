@@ -37,4 +37,4 @@ El desplegable **Intervalo de revisión** de la barra lateral acepta:
 | `wpcity_cf_review_interval` | Post meta | Intervalo propio de la entrada, en días |
 | `wpcity_cf_last_reviewed` | Post meta | Fecha MySQL de la última revisión |
 
-Al borrar el plugin desaparecen las cuatro, junto con cualquier otra clave del espacio de nombres `wpcity_cf_`.
+Al borrar el plugin desaparecen las cuatro, y nada más. La extensión Pro guarda sus propios ajustes bajo `wpcity_cf_pro_`, que queda dentro de este prefijo pero pertenece a Pro; esos se van cuando borras Pro.

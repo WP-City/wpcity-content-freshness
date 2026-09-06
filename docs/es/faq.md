@@ -32,7 +32,7 @@ Sí, siempre que el tipo de contenido sea público. Márcalo en **Ajustes > Fres
 
 ### ¿Qué pasa con mis datos si borro el plugin?
 
-Se elimina todo lo que hay en el espacio de nombres `wpcity_cf_`: los ajustes, las fechas de revisión de cada entrada, la meta de usuario, los transients y las tareas programadas. Desactivarlo no borra nada.
+Se eliminan las cuatro cosas que guarda: los dos ajustes, y el intervalo y la fecha de revisión de cada entrada. Nada más. Si además usas Pro, sus ajustes y su licencia se quedan donde están y se van cuando borras Pro. Desactivarlo no borra absolutamente nada.
 
 ### ¿La fecha de revisión se guarda en hora del sitio o en UTC?
 

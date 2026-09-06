@@ -32,7 +32,7 @@ Oui, tant que le type de contenu est public. Cochez-le dans **Réglages > Fraîc
 
 ### Qu'advient-il de mes données si je supprime l'extension ?
 
-Tout ce qui relève de l'espace de noms `wpcity_cf_` est supprimé : les réglages, les dates de relecture de chaque contenu, les métadonnées utilisateur, les transients et les tâches planifiées. La désactivation ne supprime rien.
+Les quatre éléments stockés sont supprimés : les deux réglages, ainsi que l'intervalle et la date de relecture de chaque contenu. Rien de plus. Si vous utilisez aussi Pro, ses réglages et sa licence restent en place et partent quand vous supprimez Pro. La désactivation ne supprime rien du tout.
 
 ### La date de relecture est-elle en heure du site ou en UTC ?
 

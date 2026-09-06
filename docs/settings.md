@@ -37,4 +37,4 @@ The **Review Interval** dropdown in the post sidebar accepts:
 | `wpcity_cf_review_interval` | Post meta | Per-post interval in days |
 | `wpcity_cf_last_reviewed` | Post meta | MySQL datetime of the last review |
 
-Deleting the plugin removes all four, along with every other key in the `wpcity_cf_` namespace.
+Deleting the plugin removes all four, and nothing else. The Pro add-on writes its own settings under `wpcity_cf_pro_`, which nests inside this prefix but belongs to Pro; those are removed when you delete Pro.

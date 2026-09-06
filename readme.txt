@@ -73,7 +73,7 @@ Yes, as long as the post type is public. Tick it on the settings screen, or add 
 
 = What happens to my data if I delete the plugin? =
 
-Everything the plugin stores is removed: the settings, the review dates on every post, the user meta, the transients and the scheduled events. Deactivating removes nothing.
+The four things it stores are removed: the two settings, and the review interval and review date on every post. Nothing else, so a Pro add-on keeps its own settings and licence. Deactivating removes nothing.
 
 = Is it available in my language? =
 

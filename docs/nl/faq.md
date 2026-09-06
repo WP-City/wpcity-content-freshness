@@ -32,7 +32,7 @@ Ja, zolang het berichttype openbaar is. Vink het aan onder **Instellingen > Actu
 
 ### Wat gebeurt er met mijn data als ik de plugin verwijder?
 
-Alles in de `wpcity_cf_`-namespace wordt verwijderd: de instellingen, de beoordelingsdata op elk bericht, de gebruikersmeta, de transients en de geplande taken. Deactiveren verwijdert niets.
+De vier dingen die de plugin opslaat worden verwijderd: de twee instellingen, en het beoordelingsinterval en de beoordelingsdatum op elk bericht. Verder niets. Draai je ook Pro, dan blijven diens instellingen en licentie staan en gaan die weg als je Pro verwijdert. Deactiveren verwijdert helemaal niets.
 
 ### Staat de beoordelingsdatum in sitetijd of UTC?
 

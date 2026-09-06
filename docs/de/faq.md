@@ -32,7 +32,7 @@ Ja, solange der Inhaltstyp öffentlich ist. Hake ihn unter **Einstellungen > Inh
 
 ### Was passiert mit meinen Daten, wenn ich das Plugin lösche?
 
-Alles im Namensraum `wpcity_cf_` wird entfernt: die Einstellungen, die Prüfdaten jedes Beitrags, die Benutzer-Meta, die Transients und die geplanten Aufgaben. Das Deaktivieren entfernt nichts.
+Die vier gespeicherten Dinge werden entfernt: die zwei Einstellungen sowie das Prüfintervall und das Prüfdatum jedes Beitrags. Sonst nichts. Läuft bei dir auch Pro, bleiben dessen Einstellungen und Lizenz bestehen und verschwinden erst, wenn du Pro löschst. Das Deaktivieren entfernt gar nichts.
 
 ### Wird das Prüfdatum in Website-Zeit oder UTC gespeichert?
 

@@ -32,7 +32,7 @@ Yes, as long as the post type is public. Tick it under **Settings > Content Fres
 
 ### What happens to my data if I delete the plugin?
 
-Everything in the `wpcity_cf_` namespace is removed: the settings, the review dates on every post, the user meta, the transients and the scheduled events. Deactivating the plugin removes nothing.
+The four things it stores are removed: the two settings, and the review interval and review date on every post. Nothing else. If you also run Pro, its settings and its licence stay where they are and go when you delete Pro. Deactivating this plugin removes nothing at all.
 
 ### Is the review date stored in site time or UTC?
 
