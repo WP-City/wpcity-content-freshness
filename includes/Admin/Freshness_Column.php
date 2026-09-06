@@ -11,6 +11,7 @@ namespace WPCity\ContentFreshness\Admin;
 
 defined( 'ABSPATH' ) || exit;
 
+use WPCity\ContentFreshness\Config;
 use WPCity\PluginBase\Ingredient_Interface;
 
 /**
@@ -52,10 +53,7 @@ class Freshness_Column implements Ingredient_Interface {
 	 * @return void
 	 */
 	public function register_columns(): void {
-		/** This filter is documented in includes/Admin/Freshness_Meta_Box.php */
-		$post_types = apply_filters( 'wpcity_cf_post_types', [ 'post', 'page' ] );
-
-		foreach ( $post_types as $post_type ) {
+		foreach ( Config::tracked_post_types() as $post_type ) {
 			add_filter( "manage_{$post_type}_posts_columns", [ $this, 'add_column' ] );
 			add_action( "manage_{$post_type}_posts_custom_column", [ $this, 'render_column' ], 10, 2 );
 			add_filter( "manage_edit-{$post_type}_sortable_columns", [ $this, 'sortable_column' ] );
@@ -68,18 +66,42 @@ class Freshness_Column implements Ingredient_Interface {
 	 * @param array<string, string> $columns The existing columns.
 	 * @return array<string, string>
 	 */
-	public function add_column( array $columns ): array {
+	public function add_column( mixed $columns ): array {
+		// See the note on handle_sorting(): this is a filter chain, so the
+		// value is whatever the previous callback returned, not what core
+		// passed in. A TypeError here fires during a list table render.
+		if ( ! is_array( $columns ) ) {
+			$columns = [];
+		}
+
 		$new_columns = [];
+		$inserted    = false;
 
 		foreach ( $columns as $key => $label ) {
 			$new_columns[ $key ] = $label;
 
 			if ( 'title' === $key ) {
-				$new_columns['wpcity_cf'] = '<span class="dashicons dashicons-clock" title="' . esc_attr__( 'Content Freshness', 'wpcity-content-freshness' ) . '"></span>';
+				$new_columns[ self::COLUMN_ID ] = $this->column_heading();
+				$inserted                       = true;
 			}
 		}
 
+		// Not every post type has a title column, and a broken filter chain
+		// may have handed us nothing at all. Append rather than disappear.
+		if ( ! $inserted ) {
+			$new_columns[ self::COLUMN_ID ] = $this->column_heading();
+		}
+
 		return $new_columns;
+	}
+
+	/**
+	 * The column heading markup.
+	 *
+	 * @return string
+	 */
+	private function column_heading(): string {
+		return '<span class="dashicons dashicons-clock" title="' . esc_attr__( 'Content Freshness', 'wpcity-content-freshness' ) . '"></span>';
 	}
 
 	/**
@@ -114,8 +136,13 @@ class Freshness_Column implements Ingredient_Interface {
 	 * @param array<string, string> $columns Sortable columns.
 	 * @return array<string, string>
 	 */
-	public function sortable_column( array $columns ): array {
+	public function sortable_column( mixed $columns ): array {
+		if ( ! is_array( $columns ) ) {
+			$columns = [];
+		}
+
 		$columns[ self::COLUMN_ID ] = self::META_LAST_REVIEWED;
+
 		return $columns;
 	}
 
@@ -174,8 +201,7 @@ class Freshness_Column implements Ingredient_Interface {
 			return;
 		}
 
-		$allowed         = apply_filters( 'wpcity_cf_post_types', [ 'post', 'page' ] );
-		$allowed_screens = array_map( fn( $pt ) => "edit-{$pt}", $allowed );
+		$allowed_screens = array_map( fn( string $pt ): string => "edit-{$pt}", Config::tracked_post_types() );
 
 		if ( ! in_array( $screen->id, $allowed_screens, true ) ) {
 			return;
