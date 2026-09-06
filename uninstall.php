@@ -19,13 +19,20 @@
  *                                    wpcity_cf_mark_reviewed capability
  *
  * Pro removes every one of those itself, in its own uninstall.php since
- * ce359b8, and it releases the licence domain while it is at it. The sweep is
- * therefore redundant in the normal case and wrong in the one that matters:
- * removing the free plugin and reinstalling it is an ordinary repair, and the
- * Pro plugin survives it. Its dependency check runs on 'plugins_loaded' at
- * priority 20, shows an admin notice and returns; it does not deactivate
- * itself. Wiping its settings on the way past would be a plugin deleting
- * another plugin's live configuration.
+ * ce359b8. The sweep is therefore redundant in the normal case and wrong in
+ * the one that matters: removing the free plugin and reinstalling it is an
+ * ordinary repair, and the Pro plugin survives it. Its dependency check runs
+ * on 'plugins_loaded' at priority 20, shows an admin notice and returns; it
+ * does not deactivate itself. Wiping its settings on the way past would be a
+ * plugin deleting another plugin's live configuration.
+ *
+ * The licence key is the sharpest case and the reason the boundary is drawn at
+ * ownership rather than at what a key is worth. Activations are capped per
+ * licence, and a customer only gets one back by releasing it: Pro's own
+ * uninstaller posts action=deactivate to the licence server before it deletes
+ * the key. Anything that deletes that key without making the call, this file
+ * included, costs the customer an activation slot and leaves them to free it
+ * by hand through wpcity.dev.
  *
  * The rule, across all three WPCity freemium pairs: an uninstaller removes
  * only what its own plugin writes, and a prefix sweep is fine except where
