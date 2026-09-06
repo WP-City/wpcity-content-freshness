@@ -21,26 +21,97 @@ use WPCity\PluginBase\Admin\Meta_Box;
  */
 class Freshness_Meta_Box extends Meta_Box {
 
+	private const BOX_ID   = 'wpcity_cf';
+	private const CONTEXT  = 'side';
+	private const PRIORITY = 'default';
+
 	private const META_INTERVAL      = 'wpcity_cf_review_interval';
 	private const META_LAST_REVIEWED = 'wpcity_cf_last_reviewed';
 
 	/**
 	 * Constructor.
+	 *
+	 * The title and the post types are deliberately left empty here and resolved
+	 * in register_meta_box() instead.
+	 *
+	 * Abstract_Plugin constructs every ingredient on 'plugins_loaded', which is
+	 * before 'after_setup_theme'. Calling __() at that point translates too
+	 * early and makes WordPress log a _load_textdomain_just_in_time notice on
+	 * every single request.
+	 *
+	 * The post types filter has the same problem for a different reason: at
+	 * construction time no ingredient has run init() yet, and the Pro add-on
+	 * only registers on 'plugins_loaded' at priority 20, so a filter applied
+	 * here cannot see the callbacks that are about to be added.
 	 */
 	public function __construct() {
-		$post_types = apply_filters( 'wpcity_cf_post_types', [ 'post', 'page' ] );
-		$title      = apply_filters( 'wpcity_cf_metabox_label', __( 'Content Freshness', 'wpcity-content-freshness' ) );
-
 		parent::__construct(
-			'wpcity_cf',
-			$title,
-			$post_types,
-			'side',
-			'default'
+			self::BOX_ID,
+			'',
+			[],
+			self::CONTEXT,
+			self::PRIORITY
 		);
+	}
+
+	/**
+	 * Initialize the ingredient.
+	 *
+	 * Hooks belong here rather than in the constructor, so that constructing
+	 * the ingredient has no side effects.
+	 *
+	 * @return void
+	 */
+	public function init(): void {
+		parent::init();
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 		add_action( 'wp_ajax_wpcity_cf_mark_reviewed', [ $this, 'ajax_mark_reviewed' ] );
+	}
+
+	/**
+	 * Register the meta box.
+	 *
+	 * Runs on 'add_meta_boxes', by which point the text domain is loaded and
+	 * every plugin has had the chance to hook the filters below.
+	 *
+	 * Meta_Box also accepts callables for the title and the screens, which does
+	 * the same thing in fewer lines. This override stays because it works
+	 * against both that signature and the older string-only one. Every WPCity
+	 * plugin ships its own copy of plugin-base under the same namespace, and on
+	 * a site running a mix of versions whichever copy loads first defines the
+	 * class for everyone. Passing a callable to an older copy is a fatal error
+	 * that takes the whole site down, not just this plugin.
+	 *
+	 * @return void
+	 */
+	public function register_meta_box(): void {
+		/**
+		 * Filters the post types the freshness meta box appears on.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array<int, string> $post_types Post type slugs. Default post and page.
+		 */
+		$post_types = apply_filters( 'wpcity_cf_post_types', [ 'post', 'page' ] );
+
+		/**
+		 * Filters the meta box title.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $title The meta box title.
+		 */
+		$title = apply_filters( 'wpcity_cf_metabox_label', __( 'Content Freshness', 'wpcity-content-freshness' ) );
+
+		add_meta_box(
+			self::BOX_ID,
+			$title,
+			[ $this, 'render' ],
+			$post_types,
+			self::CONTEXT,
+			self::PRIORITY
+		);
 	}
 
 	/**

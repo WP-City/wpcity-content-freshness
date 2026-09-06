@@ -26,6 +26,29 @@ class Freshness_Column implements Ingredient_Interface {
 	 * @return void
 	 */
 	public function init(): void {
+		add_action( 'init', [ $this, 'register_columns' ] );
+		add_action( 'pre_get_posts', [ $this, 'handle_sorting' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+	}
+
+	/**
+	 * Register the column hooks for every tracked post type.
+	 *
+	 * Deliberately deferred to 'init' rather than done straight from init().
+	 * Ingredients are constructed and initialised on 'plugins_loaded' at
+	 * priority 10, while the Pro add-on registers its own on the same hook at
+	 * priority 20. Resolving the post types any earlier means a post type that
+	 * Pro or a third party enables never gets its column, because the hook
+	 * names were already fixed.
+	 *
+	 * 'init' also fires on admin-ajax.php, which 'admin_init' does not. Quick
+	 * Edit re-renders the row through wp_ajax_inline_save(), so registering
+	 * there instead would drop the column from every inline save.
+	 *
+	 * @return void
+	 */
+	public function register_columns(): void {
+		/** This filter is documented in includes/Admin/Freshness_Meta_Box.php */
 		$post_types = apply_filters( 'wpcity_cf_post_types', [ 'post', 'page' ] );
 
 		foreach ( $post_types as $post_type ) {
@@ -33,9 +56,6 @@ class Freshness_Column implements Ingredient_Interface {
 			add_action( "manage_{$post_type}_posts_custom_column", [ $this, 'render_column' ], 10, 2 );
 			add_filter( "manage_edit-{$post_type}_sortable_columns", [ $this, 'sortable_column' ] );
 		}
-
-		add_action( 'pre_get_posts', [ $this, 'handle_sorting' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 	}
 
 	/**
