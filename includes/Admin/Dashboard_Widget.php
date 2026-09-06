@@ -97,7 +97,16 @@ class Dashboard_Widget implements Ingredient_Interface {
 			'fields' => 'ids',
 		] );
 
-		$all_ids = array_unique( array_merge( $posts, $never_reviewed ) );
+		$all_ids = array_values( array_unique( array_merge( $posts, $never_reviewed ) ) );
+
+		/*
+		 * Both queries ask for ids only, and WP_Query primes neither the post
+		 * cache nor the meta cache in that mode. Without this, the loop below
+		 * costs a query per post for the row and another for the meta.
+		 */
+		if ( ! empty( $all_ids ) ) {
+			_prime_post_caches( $all_ids, false, true );
+		}
 
 		// Filter to only stale posts and sort by urgency.
 		$stale = [];
@@ -128,8 +137,9 @@ class Dashboard_Widget implements Ingredient_Interface {
 				<p class="wpcity-cf-dashboard-count">
 					<?php
 					printf(
+						/* translators: %d: number of posts that need review. */
 						esc_html( _n( '%d post needs review', '%d posts need review', $count, 'wpcity-content-freshness' ) ),
-						$count
+						(int) $count
 					);
 					?>
 				</p>
@@ -144,8 +154,14 @@ class Dashboard_Widget implements Ingredient_Interface {
 				</ul>
 				<?php if ( $count > 5 ) : ?>
 					<p class="wpcity-cf-dashboard-more">
-						<a href="<?php echo esc_url( admin_url( 'edit.php?orderby=wpcity_cf_last_reviewed&order=asc' ) ); ?>">
-							<?php printf( esc_html__( 'View all %d posts', 'wpcity-content-freshness' ), $count ); ?>
+						<a href="<?php echo esc_url( add_query_arg( [ 'post_type' => reset( $post_types ), 'orderby' => 'wpcity_cf_last_reviewed', 'order' => 'asc' ], admin_url( 'edit.php' ) ) ); ?>">
+							<?php
+							printf(
+								/* translators: %d: number of posts that need review. */
+								esc_html__( 'View all %d posts', 'wpcity-content-freshness' ),
+								(int) $count
+							);
+							?>
 						</a>
 					</p>
 				<?php endif; ?>
