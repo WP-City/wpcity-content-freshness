@@ -78,6 +78,7 @@ class Settings_Page implements Ingredient_Interface {
 
 	public function render_footer_text( string $text ): string {
 		return sprintf(
+			/* translators: 1: plugin name, 2: five star rating link. */
 			esc_html__( 'If you like %1$s, please leave us a %2$s rating. Thank you!', 'wpcity-content-freshness' ),
 			'<strong>WPCity Content Freshness</strong>',
 			'<a href="https://wordpress.org/support/view/plugin-reviews/wpcity-content-freshness?filter=5#postform" target="_blank" rel="noopener noreferrer">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
@@ -155,7 +156,7 @@ class Settings_Page implements Ingredient_Interface {
 							<div class="postbox">
 								<h3><span><?php esc_html_e( 'Rate & Review', 'wpcity-content-freshness' ); ?></span></h3>
 								<div class="inside">
-									<p><?php printf( esc_html__( 'Enjoy Content Freshness? Please consider leaving a %s rating. Thank you!', 'wpcity-content-freshness' ), '<a href="https://wordpress.org/support/view/plugin-reviews/wpcity-content-freshness?filter=5#postform" target="_blank" rel="noopener noreferrer">&#9733;&#9733;&#9733;&#9733;&#9733;</a>' ); ?></p>
+									<p><?php printf( /* translators: %s: five star rating link. */ esc_html__( 'Enjoy Content Freshness? Please consider leaving a %s rating. Thank you!', 'wpcity-content-freshness' ), '<a href="https://wordpress.org/support/view/plugin-reviews/wpcity-content-freshness?filter=5#postform" target="_blank" rel="noopener noreferrer">&#9733;&#9733;&#9733;&#9733;&#9733;</a>' ); ?></p>
 									<p><a href="https://wordpress.org/support/view/plugin-reviews/wpcity-content-freshness?filter=5#postform" target="_blank" rel="noopener noreferrer" class="button button-primary"><?php esc_html_e( 'Leave a Review', 'wpcity-content-freshness' ); ?></a></p>
 								</div>
 							</div>
@@ -176,7 +177,7 @@ class Settings_Page implements Ingredient_Interface {
 										<li><?php esc_html_e( 'Dashboard widget with stale content', 'wpcity-content-freshness' ); ?></li>
 										<li><?php esc_html_e( 'Mark as reviewed with one click', 'wpcity-content-freshness' ); ?></li>
 									</ul>
-									<p><?php printf( esc_html__( 'Version %s', 'wpcity-content-freshness' ), esc_html( WPCITY_CF_VERSION ) ); ?> | <a href="https://wpcity.dev" target="_blank" rel="noopener noreferrer">WPCity.dev</a></p>
+									<p><?php printf( /* translators: %s: plugin version number. */ esc_html__( 'Version %s', 'wpcity-content-freshness' ), esc_html( WPCITY_CF_VERSION ) ); ?> | <a href="https://wpcity.dev" target="_blank" rel="noopener noreferrer">WPCity.dev</a></p>
 								</div>
 							</div>
 						</div>

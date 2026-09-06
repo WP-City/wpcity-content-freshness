@@ -26,12 +26,16 @@ class Activator extends Base_Activator {
 	 * @return void
 	 */
 	public static function activate(): void {
-		if ( false === get_option( 'wpcity_cf_post_types' ) ) {
-			update_option( 'wpcity_cf_post_types', [ 'post', 'page' ] );
-		}
+		// add_option() is a no-op when the option already exists, so a
+		// reactivation never overwrites what the user configured.
+		add_option( 'wpcity_cf_post_types', [ 'post', 'page' ] );
+		add_option( 'wpcity_cf_default_interval', 180 );
 
-		if ( false === get_option( 'wpcity_cf_default_interval' ) ) {
-			update_option( 'wpcity_cf_default_interval', 180 );
-		}
+		/**
+		 * Fires after the plugin has been activated.
+		 *
+		 * @since 1.0.0
+		 */
+		do_action( 'wpcity_cf_activated' );
 	}
 }

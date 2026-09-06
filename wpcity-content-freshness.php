@@ -13,6 +13,7 @@
  * Author: WPCity
  * Author URI: https://wpcity.dev
  * License: GPL v2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wpcity-content-freshness
  * Domain Path: /languages
  */
@@ -35,6 +36,10 @@ if ( ! defined( 'WPCITY_CF_URL' ) ) {
 }
 if ( ! defined( 'WPCITY_CF_BASENAME' ) ) {
 	define( 'WPCITY_CF_BASENAME', plugin_basename( __FILE__ ) );
+}
+
+if ( ! file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
+	return;
 }
 
 require_once __DIR__ . '/vendor/autoload.php';

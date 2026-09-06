@@ -24,6 +24,14 @@ class Deactivator {
 	 * @return void
 	 */
 	public static function deactivate(): void {
-		// Nothing to clean up. Pro handles its own cron cleanup.
+		// The free plugin schedules no cron events and stores no transients.
+		// Pro cleans up its own, see its Deactivator.
+
+		/**
+		 * Fires after the plugin has been deactivated.
+		 *
+		 * @since 1.0.0
+		 */
+		do_action( 'wpcity_cf_deactivated' );
 	}
 }
