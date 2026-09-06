@@ -9,6 +9,8 @@ declare( strict_types=1 );
 
 namespace WPCity\ContentFreshness\Admin;
 
+defined( 'ABSPATH' ) || exit;
+
 use WPCity\PluginBase\Ingredient_Interface;
 
 /**

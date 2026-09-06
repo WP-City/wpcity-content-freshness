@@ -19,6 +19,8 @@
 
 declare( strict_types=1 );
 
+defined( 'ABSPATH' ) || exit;
+
 if ( ! defined( 'WPCITY_CF_VERSION' ) ) {
 	define( 'WPCITY_CF_VERSION', '1.0.0' );
 }

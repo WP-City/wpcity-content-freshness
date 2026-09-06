@@ -9,6 +9,8 @@ declare( strict_types=1 );
 
 namespace WPCity\ContentFreshness;
 
+defined( 'ABSPATH' ) || exit;
+
 use WPCity\PluginBase\Core\Activator as Base_Activator;
 
 /**

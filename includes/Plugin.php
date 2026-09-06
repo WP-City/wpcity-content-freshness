@@ -9,6 +9,8 @@ declare( strict_types=1 );
 
 namespace WPCity\ContentFreshness;
 
+defined( 'ABSPATH' ) || exit;
+
 use WPCity\PluginBase\Abstract_Plugin;
 use WPCity\PluginBase\Core\I18n;
 use WPCity\ContentFreshness\Admin\Settings_Page;

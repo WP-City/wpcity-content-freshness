@@ -9,6 +9,8 @@ declare( strict_types=1 );
 
 namespace WPCity\ContentFreshness\Admin;
 
+defined( 'ABSPATH' ) || exit;
+
 use WP_Post;
 use WPCity\PluginBase\Admin\Meta_Box;
 
