@@ -9,6 +9,8 @@ declare( strict_types=1 );
 
 namespace WPCity\ContentFreshness\Admin;
 
+defined( 'ABSPATH' ) || exit;
+
 use WPCity\PluginBase\Ingredient_Interface;
 
 /**
@@ -18,12 +20,39 @@ use WPCity\PluginBase\Ingredient_Interface;
  */
 class Freshness_Column implements Ingredient_Interface {
 
+	private const COLUMN_ID = 'wpcity_cf';
+
+	private const META_LAST_REVIEWED = 'wpcity_cf_last_reviewed';
+
 	/**
 	 * Initialize the ingredient.
 	 *
 	 * @return void
 	 */
 	public function init(): void {
+		add_action( 'init', [ $this, 'register_columns' ] );
+		add_action( 'pre_get_posts', [ $this, 'handle_sorting' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+	}
+
+	/**
+	 * Register the column hooks for every tracked post type.
+	 *
+	 * Deliberately deferred to 'init' rather than done straight from init().
+	 * Ingredients are constructed and initialised on 'plugins_loaded' at
+	 * priority 10, while the Pro add-on registers its own on the same hook at
+	 * priority 20. Resolving the post types any earlier means a post type that
+	 * Pro or a third party enables never gets its column, because the hook
+	 * names were already fixed.
+	 *
+	 * 'init' also fires on admin-ajax.php, which 'admin_init' does not. Quick
+	 * Edit re-renders the row through wp_ajax_inline_save(), so registering
+	 * there instead would drop the column from every inline save.
+	 *
+	 * @return void
+	 */
+	public function register_columns(): void {
+		/** This filter is documented in includes/Admin/Freshness_Meta_Box.php */
 		$post_types = apply_filters( 'wpcity_cf_post_types', [ 'post', 'page' ] );
 
 		foreach ( $post_types as $post_type ) {
@@ -31,9 +60,6 @@ class Freshness_Column implements Ingredient_Interface {
 			add_action( "manage_{$post_type}_posts_custom_column", [ $this, 'render_column' ], 10, 2 );
 			add_filter( "manage_edit-{$post_type}_sortable_columns", [ $this, 'sortable_column' ] );
 		}
-
-		add_action( 'pre_get_posts', [ $this, 'handle_sorting' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 	}
 
 	/**
@@ -89,7 +115,7 @@ class Freshness_Column implements Ingredient_Interface {
 	 * @return array<string, string>
 	 */
 	public function sortable_column( array $columns ): array {
-		$columns['wpcity_cf'] = 'wpcity_cf_last_reviewed';
+		$columns[ self::COLUMN_ID ] = self::META_LAST_REVIEWED;
 		return $columns;
 	}
 
@@ -104,12 +130,37 @@ class Freshness_Column implements Ingredient_Interface {
 			return;
 		}
 
-		if ( 'wpcity_cf_last_reviewed' !== $query->get( 'orderby' ) ) {
+		if ( self::META_LAST_REVIEWED !== $query->get( 'orderby' ) ) {
 			return;
 		}
 
-		$query->set( 'meta_key', 'wpcity_cf_last_reviewed' );
-		$query->set( 'orderby', 'meta_value' );
+		/*
+		 * A bare meta_key produces an INNER JOIN on postmeta, so every post
+		 * that was never explicitly reviewed disappears from the list as soon
+		 * as the user clicks the column header. Pairing EXISTS with NOT EXISTS
+		 * makes it a LEFT JOIN and keeps those posts in the result.
+		 */
+		$clauses = [
+			'relation' => 'OR',
+			'reviewed' => [
+				'key'     => self::META_LAST_REVIEWED,
+				'compare' => 'EXISTS',
+			],
+			'never_reviewed' => [
+				'key'     => self::META_LAST_REVIEWED,
+				'compare' => 'NOT EXISTS',
+			],
+		];
+
+		// Merge rather than overwrite; another plugin may already have set one.
+		$existing = $query->get( 'meta_query' );
+
+		$query->set(
+			'meta_query',
+			empty( $existing ) ? $clauses : [ 'relation' => 'AND', $existing, $clauses ]
+		);
+
+		$query->set( 'orderby', [ 'reviewed' => 'ASC' === strtoupper( (string) $query->get( 'order' ) ) ? 'ASC' : 'DESC' ] );
 	}
 
 	/**

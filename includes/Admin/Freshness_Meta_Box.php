@@ -9,6 +9,8 @@ declare( strict_types=1 );
 
 namespace WPCity\ContentFreshness\Admin;
 
+defined( 'ABSPATH' ) || exit;
+
 use WP_Post;
 use WPCity\PluginBase\Admin\Meta_Box;
 
@@ -19,26 +21,97 @@ use WPCity\PluginBase\Admin\Meta_Box;
  */
 class Freshness_Meta_Box extends Meta_Box {
 
+	private const BOX_ID   = 'wpcity_cf';
+	private const CONTEXT  = 'side';
+	private const PRIORITY = 'default';
+
 	private const META_INTERVAL      = 'wpcity_cf_review_interval';
 	private const META_LAST_REVIEWED = 'wpcity_cf_last_reviewed';
 
 	/**
 	 * Constructor.
+	 *
+	 * The title and the post types are deliberately left empty here and resolved
+	 * in register_meta_box() instead.
+	 *
+	 * Abstract_Plugin constructs every ingredient on 'plugins_loaded', which is
+	 * before 'after_setup_theme'. Calling __() at that point translates too
+	 * early and makes WordPress log a _load_textdomain_just_in_time notice on
+	 * every single request.
+	 *
+	 * The post types filter has the same problem for a different reason: at
+	 * construction time no ingredient has run init() yet, and the Pro add-on
+	 * only registers on 'plugins_loaded' at priority 20, so a filter applied
+	 * here cannot see the callbacks that are about to be added.
 	 */
 	public function __construct() {
-		$post_types = apply_filters( 'wpcity_cf_post_types', [ 'post', 'page' ] );
-		$title      = apply_filters( 'wpcity_cf_metabox_label', __( 'Content Freshness', 'wpcity-content-freshness' ) );
-
 		parent::__construct(
-			'wpcity_cf',
-			$title,
-			$post_types,
-			'side',
-			'default'
+			self::BOX_ID,
+			'',
+			[],
+			self::CONTEXT,
+			self::PRIORITY
 		);
+	}
+
+	/**
+	 * Initialize the ingredient.
+	 *
+	 * Hooks belong here rather than in the constructor, so that constructing
+	 * the ingredient has no side effects.
+	 *
+	 * @return void
+	 */
+	public function init(): void {
+		parent::init();
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 		add_action( 'wp_ajax_wpcity_cf_mark_reviewed', [ $this, 'ajax_mark_reviewed' ] );
+	}
+
+	/**
+	 * Register the meta box.
+	 *
+	 * Runs on 'add_meta_boxes', by which point the text domain is loaded and
+	 * every plugin has had the chance to hook the filters below.
+	 *
+	 * Meta_Box also accepts callables for the title and the screens, which does
+	 * the same thing in fewer lines. This override stays because it works
+	 * against both that signature and the older string-only one. Every WPCity
+	 * plugin ships its own copy of plugin-base under the same namespace, and on
+	 * a site running a mix of versions whichever copy loads first defines the
+	 * class for everyone. Passing a callable to an older copy is a fatal error
+	 * that takes the whole site down, not just this plugin.
+	 *
+	 * @return void
+	 */
+	public function register_meta_box(): void {
+		/**
+		 * Filters the post types the freshness meta box appears on.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array<int, string> $post_types Post type slugs. Default post and page.
+		 */
+		$post_types = apply_filters( 'wpcity_cf_post_types', [ 'post', 'page' ] );
+
+		/**
+		 * Filters the meta box title.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $title The meta box title.
+		 */
+		$title = apply_filters( 'wpcity_cf_metabox_label', __( 'Content Freshness', 'wpcity-content-freshness' ) );
+
+		add_meta_box(
+			self::BOX_ID,
+			$title,
+			[ $this, 'render' ],
+			$post_types,
+			self::CONTEXT,
+			self::PRIORITY
+		);
 	}
 
 	/**
@@ -99,8 +172,7 @@ class Freshness_Meta_Box extends Meta_Box {
 			$last_reviewed = get_the_modified_date( 'Y-m-d H:i:s', $post );
 		}
 
-		$effective_interval = $interval > 0 ? $interval : ( -1 === $interval ? 0 : $default );
-		$status             = self::get_freshness_status( $post->ID );
+		$status = self::get_freshness_status( $post->ID );
 
 		?>
 		<div class="wpcity-cf-container">
@@ -109,7 +181,13 @@ class Freshness_Meta_Box extends Meta_Box {
 				<label for="wpcity-cf-interval"><strong><?php esc_html_e( 'Review Interval', 'wpcity-content-freshness' ); ?></strong></label>
 				<select name="wpcity_cf_review_interval" id="wpcity-cf-interval">
 					<option value="0" <?php selected( $interval, 0 ); ?>>
-						<?php printf( esc_html__( 'Use default (%d days)', 'wpcity-content-freshness' ), $default ); ?>
+						<?php
+						printf(
+							/* translators: %d: default review interval in days. */
+							esc_html__( 'Use default (%d days)', 'wpcity-content-freshness' ),
+							$default
+						);
+						?>
 					</option>
 					<option value="90" <?php selected( $interval, 90 ); ?>><?php esc_html_e( '3 months', 'wpcity-content-freshness' ); ?></option>
 					<option value="180" <?php selected( $interval, 180 ); ?>><?php esc_html_e( '6 months', 'wpcity-content-freshness' ); ?></option>
@@ -160,10 +238,33 @@ class Freshness_Meta_Box extends Meta_Box {
 			return;
 		}
 
-		if ( isset( $_POST['wpcity_cf_review_interval'] ) ) {
-			$interval = (int) $_POST['wpcity_cf_review_interval'];
-			update_post_meta( $post_id, self::META_INTERVAL, $interval );
+		if ( ! isset( $_POST['wpcity_cf_review_interval'] ) ) {
+			return;
 		}
+
+		$interval = (int) $_POST['wpcity_cf_review_interval'];
+
+		/*
+		 * -1 means "do not track" and 0 means "use the site default"; anything
+		 * else is a length in days. The value goes straight into date
+		 * arithmetic, so reject what the dropdown cannot produce instead of
+		 * storing it.
+		 */
+
+		/**
+		 * Filters the review intervals a post may be set to, in days.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array<int, int> $allowed Allowed values. -1 disables tracking, 0 uses the site default.
+		 */
+		$allowed = apply_filters( 'wpcity_cf_allowed_intervals', [ -1, 0, 90, 180, 365 ] );
+
+		if ( ! in_array( $interval, array_map( 'intval', (array) $allowed ), true ) ) {
+			return;
+		}
+
+		update_post_meta( $post_id, self::META_INTERVAL, $interval );
 	}
 
 	/**
@@ -177,12 +278,12 @@ class Freshness_Meta_Box extends Meta_Box {
 		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 
 		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
-			wp_send_json_error( 'Permission denied.', 403 );
+			wp_send_json_error( __( 'Permission denied.', 'wpcity-content-freshness' ), 403 );
 		}
 
 		// Allow Pro to gate this via custom capability.
 		if ( ! apply_filters( 'wpcity_cf_can_mark_reviewed', true, $post_id ) ) {
-			wp_send_json_error( 'You do not have permission to mark this as reviewed.', 403 );
+			wp_send_json_error( __( 'You do not have permission to mark this as reviewed.', 'wpcity-content-freshness' ), 403 );
 		}
 
 		$now = current_time( 'mysql' );
@@ -231,6 +332,7 @@ class Freshness_Meta_Box extends Meta_Box {
 		if ( $is_stale ) {
 			return [
 				'color' => 'red',
+				/* translators: %d: number of days the review is overdue. */
 				'label' => sprintf( __( 'Overdue by %d days', 'wpcity-content-freshness' ), abs( $days_left ) ),
 				'days'  => $days_left,
 			];
@@ -239,6 +341,7 @@ class Freshness_Meta_Box extends Meta_Box {
 		if ( $days_left <= 30 ) {
 			return [
 				'color' => 'orange',
+				/* translators: %d: number of days until the review is due. */
 				'label' => sprintf( __( 'Due in %d days', 'wpcity-content-freshness' ), $days_left ),
 				'days'  => $days_left,
 			];
@@ -246,6 +349,7 @@ class Freshness_Meta_Box extends Meta_Box {
 
 		return [
 			'color' => 'green',
+			/* translators: %s: formatted date of the last review. */
 			'label' => sprintf( __( 'Reviewed %s', 'wpcity-content-freshness' ), wp_date( get_option( 'date_format' ), $reviewed_ts ) ),
 			'days'  => $days_left,
 		];
