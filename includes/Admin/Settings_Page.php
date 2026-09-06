@@ -11,6 +11,7 @@ namespace WPCity\ContentFreshness\Admin;
 
 defined( 'ABSPATH' ) || exit;
 
+use WPCity\ContentFreshness\Config;
 use WPCity\PluginBase\Ingredient_Interface;
 
 /**
@@ -76,7 +77,7 @@ class Settings_Page implements Ingredient_Interface {
 		add_filter( 'admin_footer_text', [ $this, 'render_footer_text' ] );
 	}
 
-	public function render_footer_text( string $text ): string {
+	public function render_footer_text( mixed $text ): string {
 		return sprintf(
 			/* translators: 1: plugin name, 2: five star rating link. */
 			esc_html__( 'If you like %1$s, please leave us a %2$s rating. Thank you!', 'wpcity-content-freshness' ),
@@ -192,7 +193,7 @@ class Settings_Page implements Ingredient_Interface {
 
 	private function render_post_types_field(): void {
 		$post_types = get_post_types( [ 'public' => true ], 'objects' );
-		$enabled    = $this->get_enabled_post_types( [] );
+		$enabled    = $this->get_enabled_post_types( null );
 
 		echo '<fieldset>';
 		foreach ( $post_types as $post_type ) {
@@ -212,7 +213,7 @@ class Settings_Page implements Ingredient_Interface {
 	}
 
 	private function render_interval_field(): void {
-		$value = (int) get_option( self::OPTION_DEFAULT_INTERVAL, 180 );
+		$value = Config::default_interval();
 		?>
 		<select name="<?php echo esc_attr( self::OPTION_DEFAULT_INTERVAL ); ?>">
 			<option value="90" <?php selected( $value, 90 ); ?>><?php esc_html_e( '3 months (90 days)', 'wpcity-content-freshness' ); ?></option>
@@ -224,21 +225,48 @@ class Settings_Page implements Ingredient_Interface {
 
 	public function sanitize_post_types( mixed $value ): array {
 		if ( ! is_array( $value ) ) {
-			return [ 'post', 'page' ];
+			return Config::DEFAULT_POST_TYPES;
 		}
 		$valid = get_post_types( [ 'public' => true ] );
 		return array_values( array_intersect( $value, $valid ) );
 	}
 
-	public function get_enabled_post_types( array $default ): array {
+	/**
+	 * Filter callback: the post types selected in the settings.
+	 *
+	 * $default is deliberately untyped. This runs on 'wpcity_cf_post_types',
+	 * a filter this plugin documents and invites others to use, so the value
+	 * that arrives is whatever the previous callback in the chain returned.
+	 * class-wp-hook.php is not strict typed, so a third party that returns the
+	 * wrong shape, or forgets to return and yields null, would throw a
+	 * TypeError here during 'plugins_loaded', before WordPress has rendered
+	 * anything. That is a white site, not a broken meta box. The return type
+	 * stays strict because everything downstream still needs an array.
+	 *
+	 * @param mixed $default Incoming value, ignored: the stored option wins.
+	 * @return array<int, string> Post type slugs.
+	 */
+	public function get_enabled_post_types( mixed $default ): array {
 		$saved = get_option( self::OPTION_POST_TYPES );
+
 		if ( ! is_array( $saved ) || empty( $saved ) ) {
-			return [ 'post', 'page' ];
+			return Config::DEFAULT_POST_TYPES;
 		}
+
 		return $saved;
 	}
 
-	public function get_default_interval( int $default ): int {
-		return (int) get_option( self::OPTION_DEFAULT_INTERVAL, 180 );
+	/**
+	 * Filter callback: the default review interval from the settings.
+	 *
+	 * $default is untyped for the same reason as get_enabled_post_types().
+	 *
+	 * @param mixed $default Incoming value, ignored: the stored option wins.
+	 * @return int Interval in days.
+	 */
+	public function get_default_interval( mixed $default ): int {
+		$value = get_option( self::OPTION_DEFAULT_INTERVAL, Config::DEFAULT_INTERVAL );
+
+		return is_numeric( $value ) ? (int) $value : Config::DEFAULT_INTERVAL;
 	}
 }

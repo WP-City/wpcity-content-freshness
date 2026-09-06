@@ -12,6 +12,7 @@ namespace WPCity\ContentFreshness\Admin;
 defined( 'ABSPATH' ) || exit;
 
 use WP_Post;
+use WPCity\ContentFreshness\Config;
 use WPCity\PluginBase\Admin\Meta_Box;
 
 /**
@@ -86,14 +87,11 @@ class Freshness_Meta_Box extends Meta_Box {
 	 * @return void
 	 */
 	public function register_meta_box(): void {
-		/**
-		 * Filters the post types the freshness meta box appears on.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param array<int, string> $post_types Post type slugs. Default post and page.
-		 */
-		$post_types = apply_filters( 'wpcity_cf_post_types', [ 'post', 'page' ] );
+		$post_types = Config::tracked_post_types();
+
+		if ( empty( $post_types ) ) {
+			return;
+		}
 
 		/**
 		 * Filters the meta box title.
@@ -102,7 +100,7 @@ class Freshness_Meta_Box extends Meta_Box {
 		 *
 		 * @param string $title The meta box title.
 		 */
-		$title = apply_filters( 'wpcity_cf_metabox_label', __( 'Content Freshness', 'wpcity-content-freshness' ) );
+		$title = (string) apply_filters( 'wpcity_cf_metabox_label', __( 'Content Freshness', 'wpcity-content-freshness' ) );
 
 		add_meta_box(
 			self::BOX_ID,
@@ -125,8 +123,7 @@ class Freshness_Meta_Box extends Meta_Box {
 			return;
 		}
 
-		$allowed = apply_filters( 'wpcity_cf_post_types', [ 'post', 'page' ] );
-		if ( ! in_array( $screen->post_type, $allowed, true ) ) {
+		if ( ! in_array( $screen->post_type, Config::tracked_post_types(), true ) ) {
 			return;
 		}
 
@@ -165,7 +162,7 @@ class Freshness_Meta_Box extends Meta_Box {
 
 		$interval      = (int) get_post_meta( $post->ID, self::META_INTERVAL, true );
 		$last_reviewed = get_post_meta( $post->ID, self::META_LAST_REVIEWED, true );
-		$default       = (int) apply_filters( 'wpcity_cf_default_interval', 180 );
+		$default       = Config::default_interval();
 
 		// Fallback: use post modified date if never explicitly reviewed.
 		if ( empty( $last_reviewed ) ) {
@@ -282,7 +279,7 @@ class Freshness_Meta_Box extends Meta_Box {
 		}
 
 		// Allow Pro to gate this via custom capability.
-		if ( ! apply_filters( 'wpcity_cf_can_mark_reviewed', true, $post_id ) ) {
+		if ( ! (bool) apply_filters( 'wpcity_cf_can_mark_reviewed', true, $post_id ) ) {
 			wp_send_json_error( __( 'You do not have permission to mark this as reviewed.', 'wpcity-content-freshness' ), 403 );
 		}
 
@@ -308,7 +305,7 @@ class Freshness_Meta_Box extends Meta_Box {
 	public static function get_freshness_status( int $post_id ): array {
 		$interval      = (int) get_post_meta( $post_id, self::META_INTERVAL, true );
 		$last_reviewed = get_post_meta( $post_id, self::META_LAST_REVIEWED, true );
-		$default       = (int) apply_filters( 'wpcity_cf_default_interval', 180 );
+		$default       = Config::default_interval();
 
 		// Not tracked.
 		if ( -1 === $interval ) {
@@ -327,7 +324,7 @@ class Freshness_Meta_Box extends Meta_Box {
 		$now         = time();
 		$days_left   = (int) ceil( ( $deadline_ts - $now ) / DAY_IN_SECONDS );
 
-		$is_stale = apply_filters( 'wpcity_cf_is_stale', $days_left <= 0, $post_id, $effective, $last_reviewed );
+		$is_stale = (bool) apply_filters( 'wpcity_cf_is_stale', $days_left <= 0, $post_id, $effective, $last_reviewed );
 
 		if ( $is_stale ) {
 			return [
